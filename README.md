@@ -7,14 +7,18 @@ A main difference of PRISM-InterLeak and other related leakage quantification to
 
 # Installation
 Compiling:
-cd prism
+
+cd prism-interleak
+
 make
 
 
 
 # Usage
 cd prism/bin
+
 prism -interleak [options] <model-file> [more-options]
+
 
 Options:
 ========
