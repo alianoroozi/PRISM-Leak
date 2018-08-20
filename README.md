@@ -37,15 +37,9 @@ Display PRISM help message
 Display PRISM-InterLeak and PRISM version info
 
 
-
 # People
 The people currently working on the tool are:
 Ali A. Noroozi (link), currently a Ph.D. student at University of Tabriz and lead developer of the project,
 Khayyam Salehi, currently a Ph.D. student at University of Tabriz and developer of the project,
 Jaber Karimpour (link), an associate professor at University of Tabriz and supervisor of the project,
 Ayaz Isazadeh (link), a professor at University of Tabriz and supervisor of the project.
-
-=======
-# PRISM-InLeak
-A tool for computing information leakage of probabilistic programs
-
