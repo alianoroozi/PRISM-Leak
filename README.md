@@ -19,9 +19,8 @@ make
 cd prism-interleak/bin
 prism  -interleak [options] <model-file> [more-options]
 ```
-
 Options:
-========
+
 `-min`  Compute the expected leakage using min-entropy 
 
 `-shannon`  Compute the expected leakage using Shannon entropy. The default is Shannon entropy
