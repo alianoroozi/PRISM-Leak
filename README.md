@@ -28,15 +28,9 @@ Options:
 
 `-leakbounds`  Compute maximum and minimum leakages, which are upper and lower leakage bounds for an attacker with a given prior knowledge about the secret input
 
-```console
--bounded <n>
-```  
-Compute bounded time leakage, which is the amount of expected leakage at a given time (step)
+`-bounded <n>`  Compute bounded time leakage, which is the amount of expected leakage at a given time (step)
 
-```console
--initdist <file>
-```
-Specify the initial probability distribution of the secret input. If not specified, the uniform distribution is assumed
+`-initdist <file>`  Specify the initial probability distribution of the secret input. If not specified, the uniform distribution is assumed
 
 `-help | -h | -?`  Display this help message
 
@@ -48,11 +42,11 @@ Specify the initial probability distribution of the secret input. If not specifi
 # People
 The people currently working on the tool are:
 
-[Ali A. Noroozi](https://alianoroozi.github.io), currently a Ph.D. student at [University of Tabriz](http://tabrizu.ac.ir/en) and lead developer of the project,
+* [Ali A. Noroozi](https://alianoroozi.github.io), currently a Ph.D. student at [University of Tabriz](http://tabrizu.ac.ir/en) and lead developer of the project,
 
-Khayyam Salehi, currently a Ph.D. student at University of Tabriz and developer of the project,
+* Khayyam Salehi, currently a Ph.D. student at University of Tabriz and developer of the project,
 
-[Jaber Karimpour](http://simap.tabrizu.ac.ir/cv/karimpour/?lang=en-gb), an associate professor at University of Tabriz and supervisor of the project,
+* [Jaber Karimpour](http://simap.tabrizu.ac.ir/cv/karimpour/?lang=en-gb), an associate professor at University of Tabriz and supervisor of the project,
 
-[Ayaz Isazadeh](http://isazadeh.net/ayaz), a professor at University of Tabriz and supervisor of the project.
+* [Ayaz Isazadeh](http://isazadeh.net/ayaz), a professor at University of Tabriz and supervisor of the project.
 
