@@ -22,20 +22,11 @@ prism  -interleak [options] <model-file> [more-options]
 
 Options:
 ========
-```console
--min
-```
-Compute the expected leakage using min-entropy
+`-min`  Compute the expected leakage using min-entropy
 
-```console
--shannon
-```
-Compute the expected leakage using Shannon entropy. The default is Shannon entropy
+`-shannon`  Compute the expected leakage using Shannon entropy. The default is Shannon entropy
 
-```console
--leakbounds
-```
-Compute maximum and minimum leakages, which are upper and lower leakage bounds for an attacker with a given prior knowledge about the secret input
+`-leakbounds`  Compute maximum and minimum leakages, which are upper and lower leakage bounds for an attacker with a given prior knowledge about the secret input
 
 ```console
 -bounded <n>
@@ -47,20 +38,11 @@ Compute bounded time leakage, which is the amount of expected leakage at a given
 ```
 Specify the initial probability distribution of the secret input. If not specified, the uniform distribution is assumed
 
-```console
--help | -h | -?
-```
-Display this help message
+`-help | -h | -?`  Display this help message
 
-```console
--prismhelp 
-```
-Display PRISM help message
+`-prismhelp`  Display PRISM help message
 
-```console
--version 
-```
-Display PRISM-InterLeak and PRISM version info
+`-version`  Display PRISM-InterLeak and PRISM version info
 
 
 # People
