@@ -14,9 +14,9 @@ make
 
 
 # Usage
-
+Change directory to `bin` and run `prism` with `-interleak` switch:
 ```
-cd prism-interleak/bin
+cd bin
 prism  -interleak [options] <model-file> [more-options]
 ```
 Options:
