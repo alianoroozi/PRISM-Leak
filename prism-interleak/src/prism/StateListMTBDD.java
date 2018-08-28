@@ -477,7 +477,7 @@ public class StateListMTBDD implements StateList
 					else {
 						publicVarsString += (varValues[i] == 1);
 					}
-					if (i < j-1) publicVarsString += ",";
+					publicVarsString += ",";
 				}
 				
 				if(observabilityType == Declaration.OBSERVABILITY_SECERT) {
@@ -489,10 +489,14 @@ public class StateListMTBDD implements StateList
 					else {
 						secretVarsString += (varValues[i] == 1);
 					}
-					if (i < j-1) secretVarsString += ",";
+					secretVarsString += ",";
 				}
 			}
 			
+            // remove "-" from end of publicVarsString and secretVarsString
+			publicVarsString = publicVarsString.substring(0, publicVarsString.length()-1);
+			secretVarsString = secretVarsString.substring(0, secretVarsString.length()-1);
+
             stateList.add(new State2(n, publicVarsString, secretVarsString));
             
             return;
