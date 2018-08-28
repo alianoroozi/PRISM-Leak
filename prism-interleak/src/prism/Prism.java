@@ -1718,26 +1718,26 @@ public class Prism extends PrismComponent implements PrismSettingsListener
 		currentDefinedMFConstants = null;
 
 		// Print basic model info
-		mainLog.println("\nType:        " + currentModulesFile.getModelType());
-		mainLog.print("Modules:     ");
+		mainLog.println("\nType:                  " + currentModulesFile.getModelType());
+		mainLog.print("Modules:               ");
 		for (int i = 0; i < currentModulesFile.getNumModules(); i++) {
 			mainLog.print(currentModulesFile.getModuleName(i) + " ");
 		}
 		mainLog.println();
-		mainLog.print("Variables:   ");
+		mainLog.print("Variables:             ");
 		for (int i = 0; i < currentModulesFile.getNumVars(); i++) {
 			mainLog.print(currentModulesFile.getVarName(i) + " ");
 		}
 		mainLog.println();
 		int observabilityType;
-		mainLog.print("Observable (public) variables:   ");
+		mainLog.print("Observable variables:  ");
 		for (int i = 0; i < currentModulesFile.getNumVars(); i++) {
 			observabilityType = currentModulesFile.getVarDeclaration(i).getObservabilityType();
 			if(observabilityType == Declaration.OBSERVABILITY_OBSERVABLE) 
 				mainLog.print(currentModulesFile.getVarName(i) + " ");
 		}
 		mainLog.println();
-		mainLog.print("Secret variables:   ");
+		mainLog.print("Secret variables:      ");
 		for (int i = 0; i < currentModulesFile.getNumVars(); i++) {
 			observabilityType = currentModulesFile.getVarDeclaration(i).getObservabilityType();
 			if(observabilityType == Declaration.OBSERVABILITY_SECERT) 
