@@ -46,7 +46,7 @@ public class InterLeakComputerExp {
     }
     
     /**
-     * Compute leakage of state_machine using trace-exploration-based method. 
+     * Compute leakage of the dtmc model using trace-exploration-based method. 
      * 
      * @return expected leakage
      */
