@@ -75,7 +75,7 @@ import strat.Strategy;
 
 import prisminterleakexp.InterLeakComputerExp;
 import prisminterleakexp.ProbModelExplicitExplorer;
-
+import parser.ast.Declaration;
 
 /**
  * Main class for all PRISM's core functionality.
