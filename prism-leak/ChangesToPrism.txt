@@ -1,0 +1,21 @@
+Changes to PRISM source code:
+
+new packages: 
+1. prismintertrace
+2. prismod
+
+
+existing codes:
+1. prism.PrismCL.java
+2. prism.Prism.java
+3. prism.StateListMTBDD.java
+4. prism.Version.java
+5. sparse.PrismSparse.java
+6. sparse.PrismSparse.cc 
+7. parser.ast.Declaration.java
+8. parser.PrismParser.java
+9. parser.PrismParser.jj
+10. parser.PrismParserConstants.java
+11. parser.PrismParserTokenManager.java
+12. make file of main directory
+13. README.txt of src

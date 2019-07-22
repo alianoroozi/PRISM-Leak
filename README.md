@@ -1,23 +1,23 @@
 # About
-**PRISM-InterLeak** is a tool to compute **information leakage** of concurrent probabilistic programs. It takes as input a program written in the [PRISM language](http://www.prismmodelchecker.org/manual/ThePRISMLanguage/Introduction) and analyzes the information leakage of the program. It computes various types of information leakage, including expected, minimum, maximum, bounded time, etc. 
+**PRISM-Leak** is a tool to evaluate **secure information flow** of concurrent probabilistic programs, written in the [PRISM language](http://www.prismmodelchecker.org/manual/ThePRISMLanguage/Introduction). PRISM-Leak contains two packages, a qualitative package that checks observational determinism and a quantitative package which computes various types of information leakage, including expected, minimum, maximum, and bounded time, using a trace-based algorithm and a back-bisimulation algorithm.
 
-The tool is built upon the [PRISM model checker](http://www.prismmodelchecker.org/). PRISM compiles a program written in the PRISM language, builds a discrete-time Markov chain model of the program and stores it using BDDs (Binary Decision Diagrams) and MTBDDs (Multi-Terminal Binary Decision Diagrams). PRISM-InterLeak uses these data structures to extract the set of reachable states and also create a sparse matrix containing the transitions. It then employs a depth-first path exploration algorithm to find all paths and traces of the program. For each trace, it computes the probability of the trace and the posterior entropy of the secret induced by the trace. Using these values, PRISM-InterLeak computes the *exact* values for each variant of the information leakage. 
+The tool is built upon the [PRISM model checker](http://www.prismmodelchecker.org/). PRISM compiles a program written in the PRISM language, builds a discrete-time Markov chain model of the program and stores it using BDDs (Binary Decision Diagrams) and MTBDDs (Multi-Terminal Binary Decision Diagrams). PRISM-Leak uses these data structures to extract the set of reachable states and also create a sparse matrix containing the transitions. It then verifies observational determinism or computes the amount of information leakage.
 
-A main difference of PRISM-InterLeak and other related leakage quantification tools is that PRISM-InterLeak takes into account *intermediate leakages*. This is suitable for *concurrent* programs, in which the attacker is able to observe intermediate values of publicly observable variables. 
+A main difference of PRISM-Leak and other related leakage quantification tools is that PRISM-Leak takes into account *intermediate leakages*. This is suitable for *concurrent* programs, in which the attacker is able to observe intermediate values of publicly observable variables. 
 
 # Installation
 Compiling:
 ```
-cd prism-interleak
+cd prism-leak
 make
 ```
 
 
 # Usage
-Change directory to `bin` and run `prism` with `-interleak` switch:
+Change directory to `bin` and run `prism`:
 ```
 cd bin
-prism  -interleak [options] <model-file> [more-options]
+prism  [options] <model-file> [more-options]
 ```
 Options:
 
@@ -35,13 +35,13 @@ Options:
 
 `-prismhelp`  Display PRISM help message
 
-`-version`  Display PRISM-InterLeak and PRISM version info
+`-version`  Display PRISM-Leak and PRISM version info
 
 
 # People
 The people currently working on the tool are:
 
-* [Ali A. Noroozi](https://alianoroozi.github.io), currently a Ph.D. student at [University of Tabriz](http://tabrizu.ac.ir/en) and lead developer of the project,
+* [Ali A. Noroozi](https://alianoroozi.github.io), currently a Ph.D. student at [University of Tabriz](http://tabrizu.ac.ir/en) and developer of the project,
 
 * Khayyam Salehi, currently a Ph.D. student at University of Tabriz and developer of the project,
 
