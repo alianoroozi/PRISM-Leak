@@ -1,4 +1,4 @@
-package prismintertrace;
+package prisminterleakexp;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -33,30 +33,25 @@ public class ProbModelExplicitExplorer {
 	List<ExplicitState> reachStates; // set of reachable states
 	List<ExplicitState> startStates; // set of initial states
 	
-	Map<List<String>, Double> traceProbs; // contains probabilities of traces
-	Map<List<String>, Set<Long>> tracesFinalStates; // contains final states that result from each trace. A state is considered final, if it has no successor or the only successor is itself 
+	private Map<List<String>, Map<String, Double>> traceSecretDist; // the distribution Pr(T, h), containing trace-secret probabilities: Pr(T=\bar{T}, h=\bar{h}) 
 	
 	public static int UNIFORM_PRIOR_KNOWLEDGE = 0; // probability distribution of the secret variable not specified by the user -> uniform distribution assumed
 	public static int INIT_DIST_FILE_PRIOR_KNOWLEDGE = 1; // probability distribution of the secret variable is imported from a file specified by the user
 	private int priorKnowledgeType = UNIFORM_PRIOR_KNOWLEDGE; 
 	Map<String, Double> priorKnowledge; // probability distribution of the secret variable
 	
-	private boolean savePathProbs = false; // save path probabilities in order to print them in InterLeakComputerExp
-	private Map<List<String>, Map<String, Double>> pathProbs; // contains probabilities of paths. Instead of path, secret values of initial state of path is saved.
-
-
 	JDDNode matrix;
 	String name;
 	JDDVars rows;
 	JDDVars cols;
 	ODDNode odd;
 		
-	public ProbModelExplicitExplorer(ProbModel currentModel, String initDistFileName, boolean savePathProbs) throws PrismException {
+	public ProbModelExplicitExplorer(ProbModel currentModel, String initDistFileName) throws PrismException {
 		
 		this.currentModel = currentModel;
 		this.reachStates = getStates();
 		this.startStates = getInitialStates();
-		this.savePathProbs = savePathProbs;
+//		this.savePathProbs = savePathProbs;
 		
 		if (initDistFileName == null) { // probability distribution of the secret variable not specified by the user
 			priorKnowledgeType = UNIFORM_PRIOR_KNOWLEDGE;
@@ -67,10 +62,7 @@ public class ProbModelExplicitExplorer {
 			this.priorKnowledge = readInitDistribution(initDistFileName);
 		}
 			
-		traceProbs = new HashMap<>();
-		tracesFinalStates = new HashMap<>();
-		if (savePathProbs)
-			pathProbs = new HashMap<>();
+		traceSecretDist = new HashMap<>();
 		
 		matrix = currentModel.getTrans();
 		name = currentModel.getTransSymbol();
@@ -81,7 +73,7 @@ public class ProbModelExplicitExplorer {
 	}
 	
 	/**
-	 * DFS exploration of the model to determine traces, trace probabilities, and groups of trace final states
+	 * DFS exploration of the model to determine traces and trace-secret probabilities
 	 * 
 	 */
 	public void exploreModel(boolean bounded, int boundedStep) throws PrismException {
@@ -211,68 +203,17 @@ public class ProbModelExplicitExplorer {
 	  */
 	 public void handlePath(List<Long> pa) {
 		 
-		 List<String> tr = trace(pa);
+		 double prob_pa = prob(pa);
+		 List<String> tr = trace(pa);    	 
 		 
-	     double pr = 0;
-	     	     
-	     if(traceProbs.containsKey(tr))
-	    	 pr = traceProbs.get(tr);     
-	     
-	     double muInit;
-	     if (priorKnowledgeType == UNIFORM_PRIOR_KNOWLEDGE) // uniform prior knowledge
-	    	 muInit = 1.0 / startStates.size();
-	     else { // prior knowledge determined by the user (It may be uniform or not)
-	    	 long startSt = pa.get(0);
-	    	 muInit = priorKnowledge.get(reachStates.get((int)startSt).getSecretData());
-	     }
-	     traceProbs.put(tr, pr + muInit*prob(pa));
-	     
-	     long finState = pa.get(pa.size()-1);
-	     Set<Long> finGroup;
-	     
-	     if (!tracesFinalStates.containsKey(tr)) {
-	    	 finGroup = new HashSet<>();
-	     }
-	     else {
-	    	 finGroup = tracesFinalStates.get(tr);
-	     }
-	     finGroup.add(finState);
-    	 tracesFinalStates.put(tr, finGroup);
-    	 
-    	 if (savePathProbs) {
-    		 long startSt = pa.get(0);
-    		 Map<String, Double> probs = new HashMap<>();
-    		 if(pathProbs.containsKey(tr))
-    			 probs = pathProbs.get(tr);
-    		 String secretStartSt = reachStates.get((int)startSt).getSecretData();
-    		 pr = 0;
-    	     if(probs.containsKey(secretStartSt))
-    	    	 pr = probs.get(secretStartSt);
-    	     probs.put(secretStartSt, pr + prob(pa));
-    	     pathProbs.put(tr, probs);
-    	 }
+		 Map<String, Double> probs = traceSecretDist.getOrDefault(tr, new HashMap<>());
+		 long startSt = pa.get(0);
+		 String secretStartSt = reachStates.get((int)startSt).getSecretData();
+	     probs.put(secretStartSt, probs.getOrDefault(secretStartSt, 0.0) + prob_pa);
+	     traceSecretDist.put(tr, probs);
     	 
     	 return;
 	 }
-	 
-	 /**
-	 * Removes stutter data of the trace 
-	 * 
-	 * @param trace
-	 * @return
-	 */
-	public List<String> removeStutterData(List<String> trace){
-		List<String> new_trace = new ArrayList<>();
-		String data = trace.get(0);
-		new_trace.add(data);
-		for(String d: trace) {
-			if(!d.equals(data)) {
-				data = d;
-				new_trace.add(data);
-			}
-		}
-		return new_trace;
-	}
 	 
 	 /**
 	  * 
@@ -323,15 +264,22 @@ public class ProbModelExplicitExplorer {
 	 
 	 /**
 	  * 
-	  * @return probability of path. Probability of the initial state is not included.
+	  * @return probability of path. Probability of the initial state is also included.
 	  */
 	 public double prob(List<Long> path) {
-		 
+		
         double prob = 1.0;
         for(int i=0; i < path.size()-1; i++)
             prob = prob *  getTransitionProb(path.get(i), path.get(i+1));
         
-        return prob;
+        double muInit;
+	    if (priorKnowledgeType == UNIFORM_PRIOR_KNOWLEDGE) // uniform prior knowledge
+	    	 muInit = 1.0 / startStates.size();
+	    else { // prior knowledge determined by the user (It may be uniform or not)
+		    long startSt = path.get(0);
+		    muInit = priorKnowledge.get(reachStates.get((int)startSt).getSecretData());
+	    }
+        return muInit*prob;
 	 }
 	 
 	 /**
@@ -345,65 +293,6 @@ public class ProbModelExplicitExplorer {
             trace.add(reachStates.get((int) s).getPublicData(-1));
         
         return trace;
-	 }
-	 
-	 /**
-	  * Computes freq^h_{s_f(T)}
-	  * @return frequencies of secret values in the group of final states of trace
-	  */
-	 public Map<String, Integer> finalStatesSecretFrequencies(List<String> trace){
-	        
-		 Map<String, Integer> finStateSecretFreq = new HashMap<>();
-		 String finStateSecret;
-		 int f;
-	        
-	     for(long finState: tracesFinalStates.get(trace)) {
-	            
-	    	 finStateSecret = reachStates.get((int) finState).getSecretData();
-        
-	    	 f=0;
-	    	 if(finStateSecretFreq.containsKey(finStateSecret)) 
-	    		 f = finStateSecretFreq.get(finStateSecret);
-	    	 finStateSecretFreq.put(finStateSecret, f+1);
-	     }
-	     
-	     return finStateSecretFreq;
-	 }
-	 
-	 /**
-	  * Computes mu^h_{s_f(T)}
-	  * @return probability distribution of secret values in the group of final states of trace
-	  */
-	 public Map<String, Double> finalStatesSecretDistribution(List<String> trace){
-     
-     
-		 int freq;
-		 double fssd_prob, fsp, dist;
-		 String secret_data;
-		 
-	     Map<String, Double> final_states_secret_distribution = new HashMap<>();    
-	     
-	     Map<String, Integer> final_states_secret_frequencies = finalStatesSecretFrequencies(trace);
-	     
-	     double denom = 0.0;
-	     for(Map.Entry<String, Integer> entry_freq: final_states_secret_frequencies.entrySet()){
-	         secret_data = entry_freq.getKey();
-	         freq = entry_freq.getValue();
-	         fssd_prob = this.priorKnowledge.get(secret_data);
-	         fsp = fssd_prob * freq;
-	         denom += fsp;
-	     }
-	     
-	     for(Map.Entry<String, Integer> entry_freq: final_states_secret_frequencies.entrySet()){
-	    	 secret_data = entry_freq.getKey();
-	         int final_state_frequency = entry_freq.getValue();
-	         fssd_prob = this.priorKnowledge.get(secret_data);
-	         fsp = fssd_prob * final_state_frequency;
-	         dist = fsp / denom;
-	         final_states_secret_distribution.put(secret_data, dist);
-	     }
-         
-	     return final_states_secret_distribution;
 	 }
 	 
 	 /**
@@ -477,25 +366,16 @@ public class ProbModelExplicitExplorer {
 	 
 	 /**
 	  * 
-	  * @return probabilities of traces
+	  * @return the distribution Pr(T,h), containing trace-secret probabilities
 	  */
-	 public Map<List<String>, Double> getTraceProbs() {
+	 public Map<List<String>, Map<String, Double>> getTraceSecretDist() {
 		 
-		 return traceProbs;
+		 return traceSecretDist;
 	 }
-	 
+	 	 
 	 /**
 	  * 
-	  * @return probabilities of paths
-	  */
-	 public Map<List<String>, Map<String, Double>> getPathProbs() {
-		 
-		 return pathProbs;
-	 }
-	 
-	 /**
-	  * 
-	  * @return prior knowledge, which is the probability distribution of the secret values
+	  * @return prior knowledge Pr(h), which is the probability distribution of the secret values
 	  */
 	 public Map<String, Double> getPriorKnowledge() {
 		 
