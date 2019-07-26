@@ -1,13 +1,12 @@
-package prisminterleakexp;
+package prismintertrace;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import prism.PrismException;
 import prism.PrismLog;
@@ -32,26 +31,26 @@ public class InterLeakComputerExp {
 	private boolean entropyType = SHANNON_ENTROPY; 
 		
 	private Map<List<String>, Map<String, Double>> secretTraceCondProbs; // the distribution Pr(h|T) 
-	private Map<List<String>, Double> traceProbs; // trace probabilities Pr(T)
-	
-	
+    private Map<List<String>, Double> traceProbs; // trace probabilities Pr(T)
+    
+    
     public InterLeakComputerExp(ProbModel probModel, boolean bounded, int boundedStep, 
-    		boolean entropyType, String initDistFileName, PrismLog mainLog) throws PrismException {
-    	
-    	this.entropyType = entropyType;
-    	this.mainLog = mainLog;
-    	
-    	if(!bounded)
-    		mainLog.println("\nExploring traces ...\n");
-    	// explore traces and compute trace-secret probabilities 
-    	expModel = new ProbModelExplicitExplorer(probModel, initDistFileName);
-    	expModel.exploreModel(bounded, boundedStep);
-    	
-    	computeSecretTraceCondProbs();
-    	
-    	if(!bounded)
-    		mainLog.println(traceProbs.size() + " traces found");
-    	
+            boolean entropyType, String initDistFileName, PrismLog mainLog) throws PrismException {
+        
+        this.entropyType = entropyType;
+        this.mainLog = mainLog;
+        
+        if(!bounded)
+            mainLog.println("\nExploring traces ...\n");
+        // explore traces and compute trace-secret probabilities 
+        expModel = new ProbModelExplicitExplorer(probModel, initDistFileName);
+        expModel.exploreModel(bounded, boundedStep);
+        
+        computeSecretTraceCondProbs();
+        
+        if(!bounded)
+            mainLog.println(traceProbs.size() + " traces found");
+        
     }
     
     /**
@@ -59,14 +58,14 @@ public class InterLeakComputerExp {
      * @param traceSecretDist contains trace-secret probabilities: Pr(T=\bar{T}, h=\bar{h})
      */
     public void computeSecretTraceCondProbs(){
-    	
-    	List<String> tr;
-    	Map<String, Double> trSecretDist;
-    	traceProbs = new HashMap<>(); // Pr(T)
-    	
-    	secretTraceCondProbs = expModel.getTraceSecretDist(); // Pr(h,T)
-    	for(Map.Entry<List<String>, Map<String, Double>> entry: secretTraceCondProbs.entrySet()){
-        	
+        
+        List<String> tr;
+        Map<String, Double> trSecretDist;
+        traceProbs = new HashMap<>(); // Pr(T)
+        
+        secretTraceCondProbs = expModel.getTraceSecretDist(); // Pr(h,T)
+        for(Map.Entry<List<String>, Map<String, Double>> entry: secretTraceCondProbs.entrySet()){
+            
             tr = entry.getKey();
             trSecretDist = entry.getValue(); // pr(h|T=tr)
             
@@ -74,7 +73,7 @@ public class InterLeakComputerExp {
             trSecretDist.replaceAll((k, v) -> v/trProb);
             
             traceProbs.put(tr, trProb);
-    	}
+        }
     }
     
     /**
@@ -84,8 +83,8 @@ public class InterLeakComputerExp {
      */
     public double expectedLeakage() throws PrismException {
 
-    	double initialUncertainty = initialUncertainty();
-    	double remainingUncertainty = remainingUncertainty();
+        double initialUncertainty = initialUncertainty();
+        double remainingUncertainty = remainingUncertainty();
         double leakage = initialUncertainty - remainingUncertainty;
         return leakage;
     }
@@ -96,14 +95,14 @@ public class InterLeakComputerExp {
      * @return remaining uncertainty H(h|T)
      */
     public double remainingUncertainty() throws PrismException {
-    	
-    	List<String> tr;
-    	Map<String, Double> trSecretDist;
-    	double trProb, trFinalEntropy;
-    	
+        
+        List<String> tr;
+        Map<String, Double> trSecretDist;
+        double trProb, trFinalEntropy;
+        
         double remaining_uncertainty = 0; // H(h|T)
         for(Map.Entry<List<String>, Double> entry: traceProbs.entrySet()){
-        	
+            
             tr = entry.getKey();
             trProb = entry.getValue(); // Pr(T=tr)
             trSecretDist = secretTraceCondProbs.get(tr); // Pr(h|T=tr)
@@ -121,10 +120,10 @@ public class InterLeakComputerExp {
      * @return 
      */
     public double initialUncertainty(){
-    	
-    	double initialUncertainty = 0;
-	    initialUncertainty = entropy(expModel.getPriorKnowledge()); // H(h)
-    	return initialUncertainty;
+        
+        double initialUncertainty = 0;
+        initialUncertainty = entropy(expModel.getPriorKnowledge()); // H(h)
+        return initialUncertainty;
     }
     
     /**
@@ -167,18 +166,18 @@ public class InterLeakComputerExp {
         
         // compute probability of maximum leakage
         List<String> tr;
-    	Map<String, Double> trSecretDistribution;
-    	double trFinalEntropy;
-    	
-    	double probMaxLeakage = 0;
+        Map<String, Double> trSecretDistribution;
+        double trFinalEntropy;
+        
+        double probMaxLeakage = 0;
         for(Map.Entry<List<String>, Double> entry: traceProbs.entrySet()){
-        	
+            
             tr = entry.getKey();
             trSecretDistribution = secretTraceCondProbs.get(tr);
             
-        	trFinalEntropy = entropy(trSecretDistribution);
-        	if(minimumEntropy == trFinalEntropy)
-        		probMaxLeakage += traceProbs.get(tr);
+            trFinalEntropy = entropy(trSecretDistribution);
+            if(minimumEntropy == trFinalEntropy)
+                probMaxLeakage += traceProbs.get(tr);
         }
 
         return probMaxLeakage;
@@ -196,18 +195,18 @@ public class InterLeakComputerExp {
         
         // compute probability of minimum leakage
         List<String> tr;
-    	Map<String, Double> trSecretDistribution;
-    	double trFinalEntropy;
-    	
-    	double probMinLeakage = 0;
+        Map<String, Double> trSecretDistribution;
+        double trFinalEntropy;
+        
+        double probMinLeakage = 0;
         for(Map.Entry<List<String>, Double> entry: traceProbs.entrySet()){
-        	
+            
             tr = entry.getKey();
             trSecretDistribution = secretTraceCondProbs.get(tr);
             
-        	trFinalEntropy = entropy(trSecretDistribution);
-        	if(maximumEntropy == trFinalEntropy)
-        		probMinLeakage += traceProbs.get(tr);
+            trFinalEntropy = entropy(trSecretDistribution);
+            if(maximumEntropy == trFinalEntropy)
+                probMinLeakage += traceProbs.get(tr);
         }
 
         return probMinLeakage;
@@ -218,20 +217,20 @@ public class InterLeakComputerExp {
      * @return maximum posterior entropy (Shannon or min-entropy): max(H(h|T=tr)) for all traces tr
      */
     public double maximumEntropy() {
-    	
+        
         List<String> tr;
-    	Map<String, Double> trSecretDistribution;
-    	double trFinalEntropy;
-    	
-    	double maximumEntropy = -1;
+        Map<String, Double> trSecretDistribution;
+        double trFinalEntropy;
+        
+        double maximumEntropy = -1;
         for(Map.Entry<List<String>, Double> entry: traceProbs.entrySet()){
-        	
+            
             tr = entry.getKey();
             trSecretDistribution = secretTraceCondProbs.get(tr);
         
-        	trFinalEntropy = entropy(trSecretDistribution);
-        	if(maximumEntropy < trFinalEntropy)
-        		maximumEntropy = trFinalEntropy;
+            trFinalEntropy = entropy(trSecretDistribution);
+            if(maximumEntropy < trFinalEntropy)
+                maximumEntropy = trFinalEntropy;
         }
         
         return maximumEntropy;
@@ -242,21 +241,21 @@ public class InterLeakComputerExp {
      * @return minimum posterior entropy (Shannon or min-entropy): min(H(h|T=tr)) for all traces tr
      */
     public double minimumEntropy() {
-    	
-    	// compute minimum posterior entropy
+        
+        // compute minimum posterior entropy
         List<String> tr;
-    	Map<String, Double> trSecretDistribution;
-    	double trFinalEntropy;
-    	
-    	double minimumEntropy = Double.MAX_VALUE;
+        Map<String, Double> trSecretDistribution;
+        double trFinalEntropy;
+        
+        double minimumEntropy = Double.MAX_VALUE;
         for(Map.Entry<List<String>, Double> entry: traceProbs.entrySet()){
-        	
+            
             tr = entry.getKey();
             trSecretDistribution = secretTraceCondProbs.get(tr);
         
             trFinalEntropy = entropy(trSecretDistribution);
-        	if(minimumEntropy > trFinalEntropy)
-        		minimumEntropy = trFinalEntropy;
+            if(minimumEntropy > trFinalEntropy)
+                minimumEntropy = trFinalEntropy;
         }
         return minimumEntropy;
     }
@@ -267,32 +266,32 @@ public class InterLeakComputerExp {
      * @return list of traces with maximum probability
      */
     public List<List<String>> tracesMaxProbability(){
-    	
-    	// compute max probability of all trace probabilities
-    	List<String> tr;
-    	double trProb;
-    	
-    	double maxTraceProb = -1;
-    	for(Map.Entry<List<String>, Double> entry: traceProbs.entrySet()){
-        	
+        
+        // compute max probability of all trace probabilities
+        List<String> tr;
+        double trProb;
+        
+        double maxTraceProb = -1;
+        for(Map.Entry<List<String>, Double> entry: traceProbs.entrySet()){
+            
             tr = entry.getKey();
-    		trProb = entry.getValue();
-    		
-    		if(trProb > maxTraceProb)
-    			maxTraceProb = trProb;
-    	}
-    	// find traces with maximum probability
-    	List<List<String>> tracesMaxProb = new ArrayList<>();
-    	
-    	for(Map.Entry<List<String>, Double> entry: traceProbs.entrySet()){
-        	
+            trProb = entry.getValue();
+            
+            if(trProb > maxTraceProb)
+                maxTraceProb = trProb;
+        }
+        // find traces with maximum probability
+        List<List<String>> tracesMaxProb = new ArrayList<>();
+        
+        for(Map.Entry<List<String>, Double> entry: traceProbs.entrySet()){
+            
             tr = entry.getKey();
-    		trProb = entry.getValue();
-    		
-    		if(trProb == maxTraceProb)
-    			tracesMaxProb.add(tr);
-    	}
-    	return tracesMaxProb;
+            trProb = entry.getValue();
+            
+            if(trProb == maxTraceProb)
+                tracesMaxProb.add(tr);
+        }
+        return tracesMaxProb;
     }
     
     
@@ -303,24 +302,24 @@ public class InterLeakComputerExp {
      * @return probability of complete leakage
      */
     public double probCompleteLeakage() {
-    	
-    	List<String> tr;
-    	Map<String, Double> trSecretDistribution;
-    	double trFinalEntropy, trProb;
-    	
-    	double probCompleteLeakage = 0;
+        
+        List<String> tr;
+        Map<String, Double> trSecretDistribution;
+        double trFinalEntropy, trProb;
+        
+        double probCompleteLeakage = 0;
         for(Map.Entry<List<String>, Double> entry: traceProbs.entrySet()){
-        	
+            
             tr = entry.getKey();
             trSecretDistribution = secretTraceCondProbs.get(tr);
-    	
+        
             trFinalEntropy = entropy(trSecretDistribution);
-	        if(trFinalEntropy == 0.0) { // complete leakage
-	        	trProb = traceProbs.get(tr);
-	        	probCompleteLeakage += trProb;
-	        }
-		}
-    	return probCompleteLeakage;
+            if(trFinalEntropy == 0.0) { // complete leakage
+                trProb = traceProbs.get(tr);
+                probCompleteLeakage += trProb;
+            }
+        }
+        return probCompleteLeakage;
     }
     
     /**
@@ -328,11 +327,11 @@ public class InterLeakComputerExp {
      * @return Shannon or min-entropy of distribution
      */
     public double entropy(Map<String, Double> distribution) {
-    	
-    	if(entropyType == MIN_ENTROPY)
-        	return minEntropy(distribution);
+        
+        if(entropyType == MIN_ENTROPY)
+            return minEntropy(distribution);
         else // SHANNON_ENTROPY
-        	return shannonEntropy(distribution);
+            return shannonEntropy(distribution);
     }
     
     /**
@@ -362,30 +361,30 @@ public class InterLeakComputerExp {
         for(Map.Entry<String, Double> entry: distribution.entrySet()){
             double p = entry.getValue();
             if(p != 0) {
-            	double log_p =  Logarithm.log2(p);
-            	shannon += p * log_p;
+                double log_p =  Logarithm.log2(p);
+                shannon += p * log_p;
             }
         }
         return -shannon;
     }
     
     public void printModelInfo(String modelFilename) {
-    	List<String> tr;
-    	Map<String, Double> dist;
-    	String modelInfoFileName = modelFilename.substring(0, modelFilename.lastIndexOf('.'));
+        List<String> tr;
+        Map<String, Double> dist;
+        String modelInfoFileName = modelFilename.substring(0, modelFilename.lastIndexOf('.'));
 
         try (PrintWriter outFile = new PrintWriter(modelInfoFileName)) {
-        	outFile.println(secretTraceCondProbs.size());
+            outFile.println(secretTraceCondProbs.size());
             for(Map.Entry<List<String>, Map<String, Double>> entry: secretTraceCondProbs.entrySet()){
-            	
+                
                 tr = entry.getKey();
                 dist = entry.getValue();
                 outFile.println(tr + ":" + dist);
       
             }
         } catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+            e.printStackTrace();
+        }
                 
         return;
     }

@@ -4193,7 +4193,7 @@ public class Prism extends PrismComponent implements PrismSettingsListener
 		
 		if(!bounded) { // steady state leakage computation
 			leakageComputer = new InterLeakComputerExp((ProbModel) currentModel, 
-					false, 0, entropyType, initDistFileName, mainLog, false);
+					false, 0, entropyType, initDistFileName, mainLog);
 		
 			printLeakage(leakageComputer, minmax, false, 0);
 		}
@@ -4202,7 +4202,7 @@ public class Prism extends PrismComponent implements PrismSettingsListener
 				
 				leakageComputer = 
 						new InterLeakComputerExp((ProbModel) currentModel, true, t, 
-								entropyType, initDistFileName, mainLog, false);
+								entropyType, initDistFileName, mainLog);
 				
 				printLeakage(leakageComputer, minmax, true, t);
 			}
@@ -4264,7 +4264,7 @@ public class Prism extends PrismComponent implements PrismSettingsListener
 		InterLeakComputerExp leakageComputer;
 		
 		leakageComputer = new InterLeakComputerExp((ProbModel) currentModel, 
-					false, 0, InterLeakComputerExp.MIN_ENTROPY, null, mainLog, true);
+					false, 0, InterLeakComputerExp.MIN_ENTROPY, null, mainLog);
 		leakageComputer.printModelInfo(modelFilename);
 	}
 	
