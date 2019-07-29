@@ -19,6 +19,8 @@ Change directory to `bin` and run `prism`:
 cd bin
 prism  [options] <model-file> [more-options]
 ```
+To verify observational determinism, run `prism` with `-od` switch.
+
 Options:
 
 `-min`  Compute the expected leakage using min-entropy 
