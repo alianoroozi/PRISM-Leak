@@ -50,7 +50,7 @@ The people currently working on the tool are:
 
 * [Ali A. Noroozi](https://alianoroozi.github.io), currently a Ph.D. student at [University of Tabriz](http://tabrizu.ac.ir/en) and developer of the project,
 
-* Khayyam Salehi, currently a Ph.D. student at University of Tabriz and developer of the project,
+* [Khayyam Salehi](https://github.com/Salehi-Khayyam), currently a Ph.D. student at University of Tabriz and developer of the project,
 
 * [Jaber Karimpour](http://simap.tabrizu.ac.ir/cv/karimpour/?lang=en-gb), an associate professor at University of Tabriz and supervisor of the project,
 
