@@ -39,6 +39,11 @@ Options:
 
 `-version`  Display PRISM-Leak and PRISM version info
 
+# Papers
+* Ali A. Noroozi, Jaber Karimpour, Ayaz Isazadeh: Information leakage of multi-threaded programs. Computers & Electrical Engineering, 78:400-419 (2019)
+* Ali A. Noroozi, Khayyam Salehi, Jaber Karimpour, Ayaz Isazadeh: Secure information flow analysis using the PRISM model checker. The 15th International Conference on Information Systems Security (ICISS 2019): 154-172 (2019)
+
+
 
 # People
 The people currently working on the tool are:
