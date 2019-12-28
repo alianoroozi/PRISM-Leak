@@ -40,17 +40,17 @@ Options:
 `-version`  Display PRISM-Leak and PRISM version info
 
 # Papers
-* Ali A. Noroozi, Jaber Karimpour, Ayaz Isazadeh: Information leakage of multi-threaded programs. Computers & Electrical Engineering, 78:400-419 (2019)
-* Ali A. Noroozi, Khayyam Salehi, Jaber Karimpour, Ayaz Isazadeh: Secure information flow analysis using the PRISM model checker. The 15th International Conference on Information Systems Security (ICISS 2019): 154-172 (2019)
+* Ali A. Noroozi, Jaber Karimpour, Ayaz Isazadeh: Information leakage of multi-threaded programs. Computers & Electrical Engineering, 78:400-419 (2019) [ [bib](https://alianoroozi.github.io/pubs_bib.html#noroozi2019information) | [pdf](https://alianoroozi.github.io/papers/Leak19.pdf) ] 
+* Ali A. Noroozi, Khayyam Salehi, Jaber Karimpour, Ayaz Isazadeh: Secure information flow analysis using the PRISM model checker. The 15th International Conference on Information Systems Security (ICISS 2019): 154-172 (2019) [ [bib](https://alianoroozi.github.io/pubs_bib.html#noroozi2019secure) | [pdf](https://alianoroozi.github.io/papers/PRISMOD19.pdf) ] 
 
 
 
 # People
 The people currently working on the tool are:
 
-* [Ali A. Noroozi](https://alianoroozi.github.io), currently a Ph.D. student at [University of Tabriz](http://tabrizu.ac.ir/en) and developer of the project,
+* [Ali A. Noroozi](https://alianoroozi.github.io), Ph.D. and developer of the project,
 
-* [Khayyam Salehi](https://github.com/Salehi-Khayyam), currently a Ph.D. student at University of Tabriz and developer of the project,
+* [Khayyam Salehi](https://github.com/Salehi-Khayyam), Ph.D. and developer of the project,
 
 * [Jaber Karimpour](http://simap.tabrizu.ac.ir/cv/karimpour/?lang=en-gb), an associate professor at University of Tabriz and supervisor of the project,
 
