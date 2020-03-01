@@ -63,6 +63,7 @@ import parser.ast.LabelList;
 import parser.ast.ModulesFile;
 import parser.ast.PropertiesFile;
 import parser.ast.Property;
+import prismfinalleak.FinalLeakComputerExp;
 import pta.DigitalClocks;
 import pta.PTAModelChecker;
 import simulator.GenerateSimulationPath;
@@ -75,7 +76,7 @@ import strat.Strategy;
 
 import prismintertrace.ExplicitState;
 import prismintertrace.InterLeakComputerExp;
-import prismintertrace.ProbModelExplicitExplorer;
+import prismintertrace.ProbModelTraceExplorer;
 import prismod.ODChecker;
 
 /**
@@ -4174,6 +4175,80 @@ public class Prism extends PrismComponent implements PrismSettingsListener
 	//----------------------------------------------------------------------------------------------
 	
 	/**
+	 * Compute final leakage using explicit model checking
+	 */
+	public void computeFinalLeakExp(boolean minmax, boolean bounded, int boundedStep,  
+			boolean entropyType, String initDistFileName) throws PrismException {
+		
+		if (currentModelType != ModelType.DTMC) {
+			throw new PrismNotSupportedException("Model type not yet supported");
+		}
+		
+		// Build model
+		buildModelIfRequired();
+		
+		mainLog.println();
+		mainLog.println("-----------Computing final leakage----------------");
+		
+		FinalLeakComputerExp leakComputer;
+		
+		if(!bounded) { // steady state leakage computation
+			leakComputer = new FinalLeakComputerExp((ProbModel) currentModel, 
+					false, 0, entropyType, initDistFileName, mainLog);
+		
+			printFinalLeakage(leakComputer, minmax, false, 0);
+		}
+		else { // bounded time leakage computation
+			for(int t=0; t < boundedStep; t++) {
+				
+				leakComputer = 
+						new FinalLeakComputerExp((ProbModel) currentModel, true, t, 
+								entropyType, initDistFileName, mainLog);
+				
+				printFinalLeakage(leakComputer, minmax, true, t);
+			}
+		}
+	}
+	
+	/**
+	 * Helper function for printing intermediate leakage variants
+	 */
+	public void printFinalLeakage(FinalLeakComputerExp leakComputer, boolean minmax, boolean bounded, int t) throws PrismException{
+		
+		double initUncer = leakComputer.initialUncertainty();
+		
+		if(bounded) {
+			if(t==0) {
+				mainLog.println("\nInitial Uncertainty (secret size): " + initUncer + " bits\n");
+			}
+			mainLog.println("Time " + t + ":");
+		}
+		else
+			mainLog.println("\nInitial Uncertainty (secret size): " + initUncer + " bits\n");
+		
+		if(!minmax) { // expected leakage
+			double expectedLeakage = leakComputer.expectedLeakage();
+			mainLog.println("Expected Leakage: " + expectedLeakage + " bits (" + expectedLeakage*100/initUncer+ " %)\n");
+		}
+		else { // leakbounds
+		
+			double maxLeakage = leakComputer.maxLeakage();
+			mainLog.println("Max Leakage: " + maxLeakage + " bits (" + maxLeakage*100/initUncer+ " %)");
+			
+			double probMaxLeakage = leakComputer.probMaxLeakage();
+			mainLog.println("Prob of Max Leakage: " + probMaxLeakage);
+			
+			double minLeakage = leakComputer.minLeakage();
+			mainLog.println("Min Leakage: " + minLeakage + " bits (" + minLeakage*100/initUncer+ " %)");
+			
+			double probMinLeakage = leakComputer.probMinLeakage();
+			mainLog.println("Prob of Min Leakage: " + probMinLeakage);
+		}
+		
+		return;
+	}
+	
+	/**
 	 * Compute intermediate leakage using explicit model checking
 	 */
 	public void computeInterLeakExp(boolean minmax, boolean bounded, int boundedStep,  
@@ -4195,7 +4270,7 @@ public class Prism extends PrismComponent implements PrismSettingsListener
 			leakageComputer = new InterLeakComputerExp((ProbModel) currentModel, 
 					false, 0, entropyType, initDistFileName, mainLog);
 		
-			printLeakage(leakageComputer, minmax, false, 0);
+			printInterLeakage(leakageComputer, minmax, false, 0);
 		}
 		else { // bounded time leakage computation
 			for(int t=0; t < boundedStep; t++) {
@@ -4204,15 +4279,15 @@ public class Prism extends PrismComponent implements PrismSettingsListener
 						new InterLeakComputerExp((ProbModel) currentModel, true, t, 
 								entropyType, initDistFileName, mainLog);
 				
-				printLeakage(leakageComputer, minmax, true, t);
+				printInterLeakage(leakageComputer, minmax, true, t);
 			}
 		}
 	}
 	
 	/**
-	 * Helper function for printing leakage variants
+	 * Helper function for printing intermediate leakage variants
 	 */
-	public void printLeakage(InterLeakComputerExp leakageComputer, boolean minmax, boolean bounded, int t) throws PrismException{
+	public void printInterLeakage(InterLeakComputerExp leakageComputer, boolean minmax, boolean bounded, int t) throws PrismException{
 		
 		double initUncer = leakageComputer.initialUncertainty();
 		

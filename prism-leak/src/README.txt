@@ -17,8 +17,9 @@ Dave Parker.
 * parser/ - The PRISM model/properties parser, accompanying abstract syntax tree data structures and tools (and JavaCC parser files).
 * pepa/ - PEPA-to-PRISM model translation.
 * prism/ - The main Prism API, the command-line tool, and Java classes for symbolic data structures and algorithms.
-* prismintertrace/ - Trace-based method for computing leakage variants
-* prismod/ - Algorithms for verifying observational determinism
+* prismfinalleak/ - Path-based method for omputing variants of final leakage.
+* prismintertrace/ - Trace-based method for computing leakage variants, considering intermediate leakages.
+* prismod/ - Algorithms for verifying observational determinism.
 * pta/ - Probabilistic timed automata (PTA) model checking, including DBM library.
 * scripts/ - Shell script(s) used from within make.
 * settings/ - Generic 'settings' functionality.

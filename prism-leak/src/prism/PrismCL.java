@@ -64,7 +64,8 @@ import prismintertrace.InterLeakComputerExp;
 public class PrismCL implements PrismModelListener
 {
 	  // PRISM-InterLeak flags and variables
-	private boolean interleak = true;
+	private boolean finalleak = true;
+	private boolean interleak = false;
 	private boolean interleakminmax = false;
 	private boolean interleakbounded = false;
 	private int interleakboundedstep = 0;
@@ -365,6 +366,19 @@ public class PrismCL implements PrismModelListener
 			// Do steady-state/transient probability computation, if required
 			doSteadyState();
 			
+			// compute final leakage using explicit model checking
+			if (finalleak) {
+				
+				try {
+					prism.computeFinalLeakExp(interleakminmax, interleakbounded, interleakboundedstep, 
+			        		entropyType, initDistFileName);
+				// in case of error, report it and proceed
+				} catch (PrismException e) {
+					error(e.getMessage());
+				}
+				
+			}
+						
 			// compute intermediate leakage using explicit model checking
 			if (interleak) {
 				if (interleakbackbisim) { // use back-bisimulation method
@@ -1247,15 +1261,22 @@ public class PrismCL implements PrismModelListener
 				// verify observational determinism
 				else if (sw.equals("od")) {	
 					OD = true;
-					interleak = false;
+					finalleak = false;
+				}
+				// intermediate leakage computation
+				else if (sw.equals("interleak")) {	
+					interleak = true;
+					finalleak = false;
 				}
 				// intermediate leakage computation using trace-based method
 				else if (sw.equals("trace")) {	
-					interleakbackbisim = false;			
+					interleakbackbisim = false;
+					finalleak = false;
 				}
 				// intermediate leakage computation using back-bisimulation method
 				else if (sw.equals("back")) {	
-					interleakbackbisim = true;			
+					interleakbackbisim = true;
+					finalleak = false;
 				}
 				// min-entropy leakage
 				else if (sw.equals("min")) {
